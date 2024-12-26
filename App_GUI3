@@ -1,0 +1,832 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import *
+from tkinter import PhotoImage
+import os
+
+def create_rounded_rectangle(canvas, x1, y1, x2, y2, radius, **kwargs):
+    points = [x1+radius, y1,
+              x2-radius, y1,
+              x2, y1,
+              x2, y1+radius,
+              x2, y2-radius,
+              x2, y2,
+              x2-radius, y2,
+              x1+radius, y2,
+              x1, y2,
+              x1, y2-radius,
+              x1, y1+radius,
+              x1, y1]
+    return canvas.create_polygon(points, **kwargs, smooth=True)
+    
+class WelcomePage(tk.Frame):
+     def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+
+        welcome_label = tk.Label(self, text="Welcome to", font=("Google Sans", 20), bg=self.cget("bg"))
+        welcome_label.place(relx=0.5, rely=0.3, anchor="center")
+
+        cems_label = tk.Label(self, text="CEMS", font=("Google Sans", 60, "bold"), bg=self.cget("bg"), fg="#283593")
+        cems_label.place(relx=0.5, rely=0.4, anchor="center")
+
+        description_label = tk.Label(self, text="Campus Event Management System", font=("Google Sans", 14), bg=self.cget("bg"))
+        description_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        signup_button = tk.Button(self, text="Sign up", bg="#1E1E1E", fg="white", width=20, command=lambda: self.controller.show_frame("SignUp1"))
+        signup_button.place(relx=0.5, rely=0.7, anchor="center")
+
+        signin_button = tk.Button(self, text="Sign in", bg="#1E1E1E", fg="white", width=20, command=lambda: self.controller.show_frame("SignIn"))
+        signin_button.place(relx=0.5, rely=0.8, anchor="center")
+
+
+class SignUp1(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        
+        Back1_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("WelcomePage"))
+        Back1_button.grid(row=0, column=0, sticky="w")
+
+        hello_label = tk.Label(self, text="Hello!", font=("Google Sans", 24), bg=self.cget("bg"))
+        hello_label.grid(row=1, column=0, columnspan=2, pady=(0, 20))
+
+        info_label = tk.Label(self, text="To start your explorative journey as a student,\nyou need to create an account:", 
+                              font=("Google Sans", 12), bg=self.cget("bg"), wraplength=350, justify="center")
+        info_label.grid(row=2, column=0, columnspan=2, pady=(0, 20))
+
+        name_label = tk.Label(self, text="Name:", font=("Google Sans", 10), bg=self.cget("bg"))
+        name_label.grid(row=3, column=0, sticky="w")
+        self.name_entry = tk.Entry(self)
+        self.name_entry.grid(row=3, column=1, sticky="nw")
+        
+        student_label = tk.Label(self, text="Student ID:", font=("Google Sans", 10), bg=self.cget("bg"))
+        student_label.grid(row=4, column=0, sticky="w")
+        self.student_entry = tk.Entry(self)
+        self.student_entry.grid(row=4, column=1, sticky="nw")
+        
+        email_label = tk.Label(self, text="Email Address:", font=("Google Sans", 10), bg=self.cget("bg"))
+        email_label.grid(row=5, column=0, sticky="w")
+        self.email_entry = tk.Entry(self)
+        self.email_entry.grid(row=5, column=1, sticky="nw") 
+        
+        college_label = tk.Label(self, text="College Department:", font=("Google Sans", 10), bg=self.cget("bg"))
+        college_label.grid(row=6, column=0, sticky="w")
+        self.college_entry = tk.Entry(self)
+        self.college_entry.grid(row=6, column=1, sticky="nw") 
+        
+        program_label = tk.Label(self, text="Program:", font=("Google Sans", 10), bg=self.cget("bg"))
+        program_label.grid(row=7, column=0, sticky="w")
+        self.program_entry = tk.Entry(self)
+        self.program_entry.grid(row=7, column=1, sticky="nw") 
+
+        radio_frame = tk.Frame(self, bg=self.cget("bg"))
+        radio_frame.grid(row=9, column=0, columnspan=2, pady=(10, 0), sticky="w")
+
+        self.radio_var = tk.StringVar(value="None")
+
+        years = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"]
+
+        for i, year in enumerate(years):
+          radio = tk.Radiobutton(radio_frame, text=year, variable=self.radio_var, value=year, bg=self.cget("bg"))
+          radio.grid(row=0, column=i, padx=5)
+          
+        next_button = tk.Button(self, text="Next", bg="#1E1E1E", fg="white", width=20, command=lambda: self.controller.show_frame("SignUp2"))
+        next_button.grid(row=10, column=0, columnspan=2, pady=(20, 0))
+        
+    def get_name(self):
+        return self.name_entry.get()
+
+    def get_student_id(self):
+        return self.student_entry.get()
+        
+class YourProfile(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.controller = controller
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        Home_button = tk.Button(self, text="Home", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        Home_button.grid(row=1, column=0, sticky="w")
+        
+        LogOut1_button = tk.Button(self, text="Log Out", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourProfile"))
+        LogOut1_button.grid(row=1, column=0, sticky="e")
+        
+        profile1_label = tk.Label(self, text = "Profile", font=("Google Sans", 8), justify = "center", bg=self.cget("bg"))
+        profile1_label.grid(row=2, column=0, sticky="n")
+        
+        canvas1 = Canvas(self, width = 150, height = 150, bg=self.cget("bg"))
+        canvas1.grid(row=3, column=0, sticky="n")
+        
+        self.name_label = tk.Label(self, text="", font=("Google Sans", 12, "bold"), bg=self.cget("bg"), justify ="center")
+        self.name_label.grid(row=5, column=0, sticky="n")
+
+        self.student_id_label = tk.Label(self, text="", font=("Google Sans", 10, "bold"), bg=self.cget("bg"), justify="center")
+        self.student_id_label.grid(row=6, column=0, sticky="n")
+        
+        yourbadge = tk.Label(self, text = "\nYour Badges", font=("Google Sans", 14, "bold"), justify="center", bg=self.cget("bg"))
+        yourbadge.grid(row = 8, column = 0, sticky="n")
+        
+    def update_profile(self, name, student_id):
+        self.name_label.config(text=f"{name}")
+        self.student_id_label.config(text=f"{student_id}")
+  
+        
+class SignUp2(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF") 
+        self.configure(padx=25, pady=25)
+        
+        Back1_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("SignUp1"))
+        Back1_button.grid(row=1, column=0, sticky="w")
+
+        org_label = tk.Label(self, text="Do you have any organization?", font=("Google Sans", 20), justify ="center", bg=self.cget("bg"))
+        org_label.grid(row=4, column=0, sticky="n")
+
+        org_sublabel = tk.Label(self, text="Check the organizations you are part of:", font=("Google Sans", 12), justify ="center", bg=self.cget("bg"), fg="gray")
+        org_sublabel.grid(row=5, column=0, sticky="n")
+
+        org_vars = []
+        for i in range(5):
+            var = tk.BooleanVar()
+            org_vars.append(var) 
+            checkbutton = tk.Checkbutton(self, text=f"Org {i+1}", variable=var, bg=self.cget("bg"))
+            checkbutton.grid(row=7, column=0, sticky="w")
+
+            var2 = tk.BooleanVar()
+
+            checkbutton = tk.Checkbutton(self, text=f"Organization {i%2 + 2}", variable=var2, bg=self.cget("bg"))
+            checkbutton.grid(row=8, column=0, sticky="w")
+
+
+        next_button = tk.Button(self, text="Next", bg="#212121", fg="white", width=20, command=lambda: self.controller.show_frame("SignUp3"))
+        next_button.grid(row=10, column=0, sticky="w")
+
+
+
+class SignUp3(tk.Frame):
+   def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        
+        Back1_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("SignUp2"))
+        Back1_button.grid(row=0, column=0, sticky="w")
+
+        ready_label = tk.Label(self, text="Are you ready, Trailblazer?", font=("Google Sans", 24), bg=self.cget("bg"), wraplength=350, justify="center")
+        ready_label.grid(row=2, column=0, columnspan=2, pady=(0, 10))
+        
+        info_label = tk.Label(self, text="To start your explorative journey as a student,\nyou need to create an account:", 
+                              font=("Google Sans", 12), bg=self.cget("bg"), wraplength=350, justify="center")
+        info_label.grid(row=3, column=0, columnspan=2, pady=(0, 10))
+        
+        username_label = tk.Label(self, text="Username:", font=("Google Sans", 10), bg=self.cget("bg"))
+        username_label.grid(row=4, column=0, sticky="w")
+        self.username_entry = tk.Entry(self)
+        self.username_entry.grid(row=4, column=1, sticky="ew") 
+        
+        password_label = tk.Label(self, text="Password:", font=("Google Sans", 10), bg=self.cget("bg"))
+        password_label.grid(row=5, column=0, sticky="w")
+        self.password_entry = tk.Entry(self, show="*") 
+        self.password_entry.grid(row=5, column=1, sticky="ew") 
+        
+        confirm_password_label = tk.Label(self, text="Confirmed Password:", font=("Google Sans", 10), bg=self.cget("bg"))
+        confirm_password_label.grid(row=6, column=0, sticky="w")
+        self.confirm_password_entry = tk.Entry(self, show="*") 
+        self.confirm_password_entry.grid(row=6, column=1, sticky="ew")
+
+        ready_button = tk.Button(self, text="I'm Ready", bg="#212121", fg="white", width=20, command=lambda: self.controller.show_frame("Homepage1"))
+        ready_button.grid(row=7, column=0, columnspan=2, pady=(20, 0)) 
+
+class SignIn(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        
+        Back1_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("WelcomePage"))
+        Back1_button.grid(row=0, column=0, sticky="w")
+        
+        welcome_label = tk.Label(self, text="Welcome back, trailblazer!", font=("Google Sans", 20), bg=self.cget("bg"), wraplength=350, justify="center")
+        welcome_label.grid(row=2, column=0, columnspan=2, pady=(0, 10))
+        
+        info1_label = tk.Label(self, text="To continue your explorative journey as a student,\nyou must fill out the following details:", 
+                              font=("Google Sans", 10), bg=self.cget("bg"), wraplength=350, justify="center")
+        info1_label.grid(row=3, column=0, columnspan=2, pady=(0, 10))
+        
+        username_label = tk.Label(self, text="Username:", font=("Google Sans", 10), bg=self.cget("bg"))
+        username_label.grid(row=4, column=0, sticky="w")
+        self.username_entry = tk.Entry(self)
+        self.username_entry.grid(row=4, column=1, sticky="ew") 
+        
+        password_label = tk.Label(self, text="Password:", font=("Google Sans", 10), bg=self.cget("bg"))
+        password_label.grid(row=5, column=0, sticky="w")
+        self.password_entry = tk.Entry(self, show="*") 
+        self.password_entry.grid(row=5, column=1, sticky="ew") 
+        
+        letsgo_button = tk.Button(self, text="Let's go", bg="#212121", fg="white", width=20, command=lambda: self.controller.show_frame("Homepage1"))
+        letsgo_button.grid(row=6, column=0, columnspan=2, pady=(20, 0))
+
+class Homepage1(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        LogOut_button = tk.Button(self, text="Log Out", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("SignIn"))
+        LogOut_button.grid(row=1, column=0, sticky="w")
+        
+        profile_button = tk.Button(self, text="My Profile", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourProfile"))
+        profile_button.grid(row=1, column=0, sticky="e")
+        
+        greetings_label = tk.Label(self, text="Maayong bungkag, Trailblazer!", font=("Google Sans", 18, "bold"), bg=self.cget("bg"), wraplength=400, justify="left")
+        greetings_label.grid(row=4, column=0, sticky="w")
+        
+        greetings2_label = tk.Label(self, text="Choose event(s) that you would love to join:", font=("Google Sans", 10, "italic"), bg=self.cget("bg"), wraplength=400, justify="left")
+        greetings2_label.grid(row=5, column=0, sticky="w")
+
+        event1_label = tk.Label(self, text="1. emPATH: Sustainable Development Goals ", font=("Google Sans", 12, "bold"), 
+                               bg=self.cget("bg"), wraplength=380, justify="left")
+        event1_label.grid(row=6, column=0, sticky="w")
+
+        eventd1_label = tk.Label(self, text="November 23, 2024", font=("Google Sans", 10), 
+                                bg=self.cget("bg"), wraplength=380, justify="left")
+        eventd1_label.grid(row=7, column=0, sticky="w")
+
+        event1_button = tk.Button(self, text="Join Me", bg="#212121", fg="white", wraplength=380, justify="left", command=lambda: self.controller.show_frame("Join1"))
+        event1_button.grid(row=8, column=0, sticky="w")
+        
+        event2_label = tk.Label(self, text="2. solutionLAB: DFV and Art of Pitching", font=("Google Sans", 12, "bold"), 
+                               bg=self.cget("bg"), wraplength=380, justify="left")
+        event2_label.grid(row=9, column=0, sticky="w")
+
+        eventd2_label = tk.Label(self, text="November 28, 2024", font=("Google Sans", 10), 
+                                bg=self.cget("bg"), wraplength=380, justify="left")
+        eventd2_label.grid(row=10, column=0, sticky="w")
+
+        event2_button = tk.Button(self, text="Join Me", bg="#212121", fg="white", wraplength=380, justify="left", command=lambda: self.controller.show_frame("Join2"))
+        event2_button.grid(row=11, column=0, sticky="w")
+        
+        event3_label = tk.Label(self, text="3. unbUX: UI/UX Design Workshop", font=("Google Sans", 12, "bold"), 
+                               bg=self.cget("bg"), wraplength=380, justify="left")
+        event3_label.grid(row=12, column=0, sticky="w")
+
+        eventd3_label = tk.Label(self, text="January 11, 2025", font=("Google Sans", 10), 
+                                bg=self.cget("bg"), wraplength=380, justify="left")
+        eventd3_label.grid(row=13, column=0, sticky="w")
+
+        event3_button = tk.Button(self, text="Join Me", bg="#212121", fg="white", wraplength=380, justify="left", command=lambda: self.controller.show_frame("Join3"))
+        event3_button.grid(row=14, column=0, sticky="w")
+        
+        event4_label = tk.Label(self, text="4. extendED: Explore to Firebase and Flutter", font=("Google Sans", 12, "bold"), 
+                               bg=self.cget("bg"), wraplength=380, justify="left")
+        event4_label.grid(row=15, column=0, sticky="w")
+
+        eventd4_label = tk.Label(self, text="January 18, 2025", font=("Google Sans", 10), 
+                                bg=self.cget("bg"), wraplength=380, justify="left")
+        eventd4_label.grid(row=16, column=0, sticky="w")
+
+        event4_button = tk.Button(self, text="Join Me", bg="#212121", fg="white", wraplength=380, justify="left", command=lambda: self.controller.show_frame("Join4"))
+        event4_button.grid(row=17, column=0, sticky="w")
+        
+class Join1(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(1, weight=1)
+        
+        join1_label = tk.Label(self, text = "emPATH: \nSustainable Development Goals", font=("Google Sans", 14, "bold"), justify = "left", bg=self.cget("bg"))
+        join1_label.grid(row=1, column=0, sticky="w")
+        
+        org1_label = tk.Label(self, text = "Google Developer Groups on Campus USTP", font=("Google Sans", 10, "italic"), justify = "left", bg=self.cget("bg"))
+        org1_label.grid(row=2, column=0, sticky="w")
+        
+        about1_label = tk.Label(self, text = "  emPATH: Sensible Solution is the first session of iNNOVATE:\n A Solution Challenge where the participants will learn the \n fundamentals of user-centered design. It discusses here\n the Sustainable Development Goals and the\n power of empathy in designing solutions.", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        about1_label.grid(row=4, column=0, sticky="w")
+        
+        where1_label = tk.Label(self, text = "Where", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        where1_label.grid(row=5,column=0, sticky="w")
+        
+        location1_label = tk.Label(self, text = ("Google Meet & Cafeteria Hall (Hybrid)"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        location1_label.grid(row=6,column=0, sticky="w")
+        
+        when1_label = tk.Label(self, text = "When", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        when1_label.grid(row=7,column=0, sticky="w")
+        
+        time1_label = tk.Label(self, text = "November 22, 2024\n1:00PM to 5:00PM (PH-Time)", font =("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        time1_label.grid(row=8,column=0, sticky="w")
+        
+        status1_label = tk.Label(self, text = "Status", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        status1_label.grid(row=9,column=0, sticky="w")
+        
+        mandatory1_label = tk.Label(self, text = ("Mandatory"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        mandatory1_label.grid(row=10,column=0, sticky="w")
+        
+        back1_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back1_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation1_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Confirmation1"))
+        confirmation1_button.grid(row=15, column=0, sticky="e")
+        
+class Confirmation1(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        confirmation2_label = tk.Label(self, text = "Are you ready, \nTrailblazer?", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation2_label.grid(row=1, column=0, sticky="w")
+        
+        confirmation3_label = tk.Label(self, text = "Kindly fill out your desired modality of the event:", font=("Google Sans", 9, "italic"), justify = "left", bg=self.cget("bg"))
+        confirmation3_label.grid(row=2, column=0, sticky="w")
+        
+        youremail_label = tk.Label(self, text = "Your Email:", font=("Google Sans", 9, "bold"), justify = "left", bg=self.cget("bg"))
+        youremail_label.grid(row=4, column=0, sticky="w")
+        
+        self.emailc_entry = tk.Entry(self)
+        self.emailc_entry.grid(row=6, column=0, sticky="ew")
+        
+        confirmation4_label = tk.Label(self, text = "Modality:", font=("Google Sans", 10, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation4_label.grid(row=7, column=0, sticky="w")
+        
+        selected_option = tk.StringVar()
+        dropdown = tk.OptionMenu(self, selected_option, "Online", "On Site")
+        dropdown.grid(row=9, column=0, sticky="w")
+        
+        back4_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back4_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourTicket4"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")
+        
+class Join2(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(1, weight=1)
+        
+        join2_label = tk.Label(self, text = "solutionLAB: \nDFV & Art of Pitching", font=("Google Sans", 14, "bold"), justify = "left", bg=self.cget("bg"))
+        join2_label.grid(row=1, column=0, sticky="w")
+        
+        org2_label = tk.Label(self, text = "Google Developer Groups on Campus USTP", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        org2_label.grid(row=2, column=0, sticky="w")
+        
+        about2_label = tk.Label(self, text = " solutionLAB: DFV & Art of Pitching is the second session of \niNNOVATE: A Solution Challenge where the participants will learn \nthe importance of DFV framework and pitching in Business \nSolutions. It also helps to develop your solution concept and \nhone your pitching skills.", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        about2_label.grid(row=4, column=0, sticky="w")
+        
+        where2_label = tk.Label(self, text = "Where", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        where2_label.grid(row=5,column=0, sticky="w")
+        
+        location2_label = tk.Label(self, text = ("Google Meet & Cafeteria Hall (Hybrid)"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        location2_label.grid(row=6,column=0, sticky="w")
+        
+        when2_label = tk.Label(self, text = "When", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        when2_label.grid(row=7,column=0, sticky="w")
+        
+        time2_label = tk.Label(self, text = "November 28, 2024\n1:00PM to 5:00PM (PH-Time)", font =("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        time2_label.grid(row=8,column=0, sticky="w")
+        
+        status2_label = tk.Label(self, text = "Status", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        status2_label.grid(row=9,column=0, sticky="w")
+        
+        mandatory2_label = tk.Label(self, text = ("Mandatory"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        mandatory2_label.grid(row=10,column=0, sticky="w")
+        
+        back2_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back2_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation2_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Confirmation2"))
+        confirmation2_button.grid(row=15, column=0, sticky="e")
+        
+class Confirmation2(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        confirmation2_label = tk.Label(self, text = "Are you ready, \nTrailblazer?", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation2_label.grid(row=1, column=0, sticky="w")
+        
+        confirmation3_label = tk.Label(self, text = "Kindly fill out your desired modality of the event:", font=("Google Sans", 9, "italic"), justify = "left", bg=self.cget("bg"))
+        confirmation3_label.grid(row=2, column=0, sticky="w")
+        
+        youremail_label = tk.Label(self, text = "Your Email:", font=("Google Sans", 9, "bold"), justify = "left", bg=self.cget("bg"))
+        youremail_label.grid(row=4, column=0, sticky="w")
+        
+        self.emailc_entry = tk.Entry(self)
+        self.emailc_entry.grid(row=6, column=0, sticky="ew")
+        
+        confirmation4_label = tk.Label(self, text = "Modality:", font=("Google Sans", 10, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation4_label.grid(row=7, column=0, sticky="w")
+        
+        selected_option = tk.StringVar()
+        dropdown = tk.OptionMenu(self, selected_option, "Online", "On Site")
+        dropdown.grid(row=9, column=0, sticky="w")
+        
+        back4_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back4_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourTicket3"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")        
+        
+class Join3(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        join3_label = tk.Label(self, text = "unbUX: \nUI/UX Design Workshop", font=("Google Sans", 14, "bold"), justify = "left", bg=self.cget("bg"))
+        join3_label.grid(row=1, column=0, sticky="w")
+        
+        org3_label = tk.Label(self, text = "Google Developer Groups on Campus USTP", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        org3_label.grid(row=2, column=0, sticky="w")
+        
+        about3_label = tk.Label(self, text = "  unbUX: UI/UX Design Workshop is the third session of \niNNOVATE: A Solution Challenge, where participants will \nlearn about User Interface (UI) and User Experience (UX) \ndesign to build more attractive and user-friendly products.", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        about3_label.grid(row=4, column=0, sticky="w")
+        
+        where3_label = tk.Label(self, text = "Where", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        where3_label.grid(row=5,column=0, sticky="w")
+        
+        location3_label = tk.Label(self, text = ("Zoom Meeting"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        location3_label.grid(row=6,column=0, sticky="w")
+        
+        when3_label = tk.Label(self, text = "When", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        when3_label.grid(row=7,column=0, sticky="w")
+        
+        time3_label = tk.Label(self, text = "January 11, 2025\n1:00PM to 5:00PM (PH-Time)", font =("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        time3_label.grid(row=8,column=0, sticky="w")
+        
+        status3_label = tk.Label(self, text = "Status", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        status3_label.grid(row=9,column=0, sticky="w")
+        
+        mandatory3_label = tk.Label(self, text = ("Mandatory"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        mandatory3_label.grid(row=10,column=0, sticky="w")
+        
+        back3_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back3_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Confirmation3"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")
+        
+class Confirmation3(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        confirmation2_label = tk.Label(self, text = "Are you ready, \nTrailblazer?", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation2_label.grid(row=1, column=0, sticky="w")
+        
+        confirmation3_label = tk.Label(self, text = "Kindly fill out your desired modality of the event:", font=("Google Sans", 9, "italic"), justify = "left", bg=self.cget("bg"))
+        confirmation3_label.grid(row=2, column=0, sticky="w")
+        
+        youremail_label = tk.Label(self, text = "Your Email:", font=("Google Sans", 9, "bold"), justify = "left", bg=self.cget("bg"))
+        youremail_label.grid(row=4, column=0, sticky="w")
+        
+        self.emailc_entry = tk.Entry(self)
+        self.emailc_entry.grid(row=6, column=0, sticky="ew")
+        
+        confirmation4_label = tk.Label(self, text = "Modality:", font=("Google Sans", 10, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation4_label.grid(row=7, column=0, sticky="w")
+        
+        selected_option = tk.StringVar()
+        dropdown = tk.OptionMenu(self, selected_option, "Online", "On Site")
+        dropdown.grid(row=9, column=0, sticky="w")
+        
+        back4_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back4_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourTicket2"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")
+        
+class Join4(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        join4_label = tk.Label(self, text = "extendED: \n Explore to Flutter and Firebase", font=("Google Sans", 14, "bold"), justify = "left", bg=self.cget("bg"))
+        join4_label.grid(row=1, column=0, sticky="w")
+        
+        org4_label = tk.Label(self, text = "Google Developer Groups on Campus USTP", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        org4_label.grid(row=2, column=0, sticky="w")
+        
+        about4_label = tk.Label(self, text = "  extendED: Explore Flutter & Firebase is the fourth session of \niNNOVATE: A Solution Challenge where participants will explore \n Flutter and Firebase, essential tools for building \n applications or websites.", font=("Google Sans", 10), justify = "left", bg=self.cget("bg"))
+        about4_label.grid(row=4, column=0, sticky="w")
+        
+        where4_label = tk.Label(self, text = "Where", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        where4_label.grid(row=5,column=0, sticky="w")
+        
+        location4_label = tk.Label(self, text = ("Zoom Meeting"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        location4_label.grid(row=6,column=0, sticky="w")
+        
+        when4_label = tk.Label(self, text = "When", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        when4_label.grid(row=7,column=0, sticky="w")
+        
+        time4_label = tk.Label(self, text = "January 18, 2025\n1:00PM to 5:00PM (PH-Time)", font =("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        time4_label.grid(row=8,column=0, sticky="w")
+        
+        status4_label = tk.Label(self, text = "Status", font=("Google Sans", 10, "bold"), justify="left", bg=self.cget("bg"))
+        status4_label.grid(row=9,column=0, sticky="w")
+        
+        mandatory4_label = tk.Label(self, text = ("Mandatory"), font=("Google Sans", 9), justify ="left", bg=self.cget("bg"))
+        mandatory4_label.grid(row=10,column=0, sticky="w")
+        
+        back4_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back4_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Confirmation"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")
+        
+class Confirmation(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        confirmation2_label = tk.Label(self, text = "Are you ready, \nTrailblazer?", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation2_label.grid(row=1, column=0, sticky="w")
+        
+        confirmation3_label = tk.Label(self, text = "Kindly fill out your desired modality of the event:", font=("Google Sans", 9, "italic"), justify = "left", bg=self.cget("bg"))
+        confirmation3_label.grid(row=2, column=0, sticky="w")
+        
+        youremail_label = tk.Label(self, text = "Your Email:", font=("Google Sans", 9, "bold"), justify = "left", bg=self.cget("bg"))
+        youremail_label.grid(row=4, column=0, sticky="w")
+        
+        self.emailc_entry = tk.Entry(self)
+        self.emailc_entry.grid(row=6, column=0, sticky="ew")
+        
+        confirmation4_label = tk.Label(self, text = "Modality:", font=("Google Sans", 10, "bold"), justify = "left", bg=self.cget("bg"))
+        confirmation4_label.grid(row=7, column=0, sticky="w")
+        
+        selected_option = tk.StringVar()
+        dropdown = tk.OptionMenu(self, selected_option, "Online", "On Site")
+        dropdown.grid(row=9, column=0, sticky="w")
+        
+        back4_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="left", command=lambda: self.controller.show_frame("Homepage1"))
+        back4_button.grid(row=15, column=0, sticky="w")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourTicket"))
+        confirmation3_button.grid(row=15, column=0, sticky="e")
+        
+class YourTicket(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        ticket1_label = tk.Label(self, text = "You've got a spot!", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        ticket1_label.grid(row=1, column=0, sticky="w")
+        
+        ticket2_label = tk.Label(self, text = "Save your ticket to secure attendance during the event:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ticket2_label.grid(row=2, column=0, sticky="w")
+        
+        ticket3_label = tk.Label(self, text = "My ticket:", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket3_label.grid(row=3, column=0, sticky="w")
+        
+        canvas1_label = tk.Label(self, text = "\nextendED: Explore to Flutter and Firebase\n January 18, 2025 | 1:00PM to 5:00PM", font=("Google Sans", 11), justify = "left", bg=self.cget("bg"))
+        canvas1_label.grid(row=4, column=0, sticky="n")
+        
+        canvas = Canvas(self, width = 300, height = 300, bg=self.cget("bg"))
+        photo = PhotoImage(file="iNNOVATE1.gif")
+        canvas.grid(row=5, column=0, sticky="s")
+        canvas.create_image(0,0, anchor="sw", image=photo)
+        
+        ticket5_label = tk.Label(self, text = "Status: Going", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket5_label.grid(row=7, column=0, sticky="n")
+        
+        back5_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Homepage1"))
+        back5_button.grid(row=15, column=0, sticky="n")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourEvaluation"))
+        confirmation3_button.grid(row=16, column=0, sticky="n")
+        
+class YourTicket2(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        ticket1_label = tk.Label(self, text = "You've got a spot!", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        ticket1_label.grid(row=1, column=0, sticky="w")
+        
+        ticket2_label = tk.Label(self, text = "Save your ticket to secure attendance during the event:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ticket2_label.grid(row=2, column=0, sticky="w")
+        
+        ticket3_label = tk.Label(self, text = "My ticket:", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket3_label.grid(row=3, column=0, sticky="w")
+        
+        canvas1_label = tk.Label(self, text = "\nunbUX: UI/UX Design Workshop\n January 11, 2025 | 1:00PM to 5:00PM", font=("Google Sans", 11), justify = "left", bg=self.cget("bg"))
+        canvas1_label.grid(row=4, column=0, sticky="n")
+        
+        canvas = Canvas(self, width = 300, height = 300, bg=self.cget("bg"))
+        photo = PhotoImage(file="iNNOVATE1.gif")
+        canvas.grid(row=5, column=0, sticky="s")
+        canvas.create_image(0,0, anchor="sw", image=photo)
+        
+        ticket5_label = tk.Label(self, text = "Status: Going", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket5_label.grid(row=7, column=0, sticky="n")
+        
+        back5_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Homepage1"))
+        back5_button.grid(row=15, column=0, sticky="n")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourEvaluation"))
+        confirmation3_button.grid(row=16, column=0, sticky="n")
+        
+class YourTicket3(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        ticket1_label = tk.Label(self, text = "You've got a spot!", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        ticket1_label.grid(row=1, column=0, sticky="w")
+        
+        ticket2_label = tk.Label(self, text = "Save your ticket to secure attendance during the event:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ticket2_label.grid(row=2, column=0, sticky="w")
+        
+        ticket3_label = tk.Label(self, text = "My ticket:", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket3_label.grid(row=3, column=0, sticky="w")
+        
+        canvas1_label = tk.Label(self, text = "\nsolutionLAB: DFV & Art of Pitching\n November 28, 2024 | 1:00PM to 5:00PM", font=("Google Sans", 11), justify = "left", bg=self.cget("bg"))
+        canvas1_label.grid(row=4, column=0, sticky="n")
+        
+        canvas = Canvas(self, width = 300, height = 300, bg=self.cget("bg"))
+        photo = PhotoImage(file="iNNOVATE1.gif")
+        canvas.grid(row=5, column=0, sticky="s")
+        canvas.create_image(0,0, anchor="sw", image=photo)
+        
+        ticket5_label = tk.Label(self, text = "Status: Going", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket5_label.grid(row=7, column=0, sticky="n")
+        
+        back5_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Homepage1"))
+        back5_button.grid(row=15, column=0, sticky="n")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourEvaluation"))
+        confirmation3_button.grid(row=16, column=0, sticky="n")
+        
+class YourTicket4(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        ticket1_label = tk.Label(self, text = "You've got a spot!", font=("Google Sans", 20, "bold"), justify = "left", bg=self.cget("bg"))
+        ticket1_label.grid(row=1, column=0, sticky="w")
+        
+        ticket2_label = tk.Label(self, text = "Save your ticket to secure attendance during the event:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ticket2_label.grid(row=2, column=0, sticky="w")
+        
+        ticket3_label = tk.Label(self, text = "My ticket:", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket3_label.grid(row=3, column=0, sticky="w")
+        
+        canvas1_label = tk.Label(self, text = "\nemPATH: Sensible Solution \n November 22, 2024 | 1:00PM to 5:00PM", font=("Google Sans", 11), justify = "left", bg=self.cget("bg"))
+        canvas1_label.grid(row=4, column=0, sticky="n")
+        
+        canvas = Canvas(self, width = 300, height = 300, bg=self.cget("bg"))
+        photo = PhotoImage(file="iNNOVATE1.gif")
+        canvas.grid(row=5, column=0, sticky="s")
+        canvas.create_image(0,0, anchor="sw", image=photo)
+        
+        ticket5_label = tk.Label(self, text = "Status: Going", font=("Google Sans", 9, "italic"), justify="center", bg=self.cget("bg"))
+        ticket5_label.grid(row=7, column=0, sticky="n")
+        
+        back5_button = tk.Button(self, text="Back", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("Homepage1"))
+        back5_button.grid(row=15, column=0, sticky="n")
+        
+        confirmation3_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourEvaluation"))
+        confirmation3_button.grid(row=16, column=0, sticky="n")
+        
+class YourEvaluation(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        eval1_label = tk.Label(self, text = "What can you say about this, \nTrailblazer?", font=("Google Sans", 18, "bold"), justify = "left", bg=self.cget("bg"))
+        eval1_label.grid(row=1, column=0, sticky="w")
+        
+        eval2_label = tk.Label(self, text = "In order to improve their events, kindly tell us your feedback:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        eval2_label.grid(row=2, column=0, sticky="w")
+        
+        ques1_label = tk.Label(self, text = "Question 1: \nLorem ipsum dolor sit amet, consectetur adipiscing elit. ", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ques1_label.grid(row=3, column=0, sticky="w")
+        
+        text1 = tk.Text(self, height=5, width=30)
+        text1.grid(row=4, column=0, sticky="w")
+        text1.insert(tk.END, "You can type here!")
+        
+        ques2_label = tk.Label(self, text = "Question 2: \nLorem ipsum dolor sit amet, consectetur adipiscing elit. ", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ques2_label.grid(row=5, column=0, sticky="w")
+        
+        text2 = tk.Text(self, height=5, width=30)
+        text2.grid(row=6, column=0, sticky="w")
+        text2.insert(tk.END, "You can type here!")
+        
+        ques3_label = tk.Label(self, text = "Question 3: \nLorem ipsum dolor sit amet, consectetur adipiscing elit. ", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        ques3_label.grid(row=7, column=0, sticky="w")
+        
+        text3 = tk.Text(self, height=5, width=30)
+        text3.grid(row=8, column=0, sticky="w")
+        text3.insert(tk.END, "You can type here!")
+        
+        confirmation4_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourBadge"))
+        confirmation4_button.grid(row=16, column=0, sticky="n")
+    
+class YourBadge(tk.Frame):
+    def __init__(self, parent, controller):
+        self.controller = controller
+        tk.Frame.__init__(self, parent, bg="#FFFFFF")
+        self.configure(padx=25, pady=25)
+        self.grid_columnconfigure(0, weight=1)
+        
+        badge1_label = tk.Label(self, text = "ConDRAGulations, \nTrailblazer!", font=("Google Sans", 18, "bold"), justify = "left", bg=self.cget("bg"))
+        badge1_label.grid(row=1, column=0, sticky="w")
+        
+        badge2_label = tk.Label(self, text = "As you actively participate the event, you will receive a badge:", font=("Google Sans", 10), justify="left", bg=self.cget("bg"))
+        badge2_label.grid(row=2, column=0, sticky="w")
+        
+        canvas1 = Canvas(self, width = 300, height = 300, bg=self.cget("bg"))
+        photo = PhotoImage(file="iNNOVATE1.gif")
+        canvas1.grid(row=4, column=0, sticky="s")
+        canvas1.create_image(0,0, anchor="sw", image=photo)
+        
+        badge3_label = tk.Label(self, text = "Ice Cream Yummy", font=("Google Sans", 14, "bold"), justify = "center", bg=self.cget("bg"))
+        badge3_label.grid(row=5, column=0, sticky="n")
+        
+        badge4_label = tk.Label(self, text = "Your Badge", font=("Google Sans", 10, "italic"), justify="center", bg=self.cget("bg"))
+        badge4_label.grid(row=6, column=0, sticky="n")
+        
+        claim_button = tk.Button(self, text="Confirmation", bg="#212121", fg="white", wraplength=400, justify="center", command=lambda: self.controller.show_frame("YourProfile"))
+        claim_button.grid(row=16, column=0, sticky="n")
+        
+class App(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.title("CEMS - Campus Event Management System")
+        self.geometry("420x650")
+        self.configure(bg="#263238")
+
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+        for F in (WelcomePage, 
+          SignUp1, 
+          SignUp2, 
+          SignUp3, 
+          SignIn, 
+          Homepage1, 
+          Join1, 
+          Join2, 
+          Join3, 
+          Join4, 
+          Confirmation,
+          Confirmation1,
+          Confirmation2,
+          Confirmation3, 
+          YourTicket,
+          YourTicket2,
+          YourTicket3, 
+          YourTicket4,
+          YourEvaluation, 
+          YourBadge, 
+          YourProfile):
+            page_name = F.__name__
+            frame = F(parent=container, controller=self)
+            self.frames[page_name] = frame
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame("WelcomePage")
+
+    def show_frame(self, page_name):
+        frame = self.frames[page_name]
+        if page_name == "YourProfile":
+            sign_up_frame = self.frames["SignUp1"]
+            name = sign_up_frame.name_entry.get()
+            student_id = sign_up_frame.student_entry.get()
+            frame.update_profile(name, student_id)
+        frame.tkraise()
+
+if __name__ == "__main__":
+    app = App()
+    app.mainloop()
